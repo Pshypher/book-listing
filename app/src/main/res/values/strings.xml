@@ -5,4 +5,5 @@
     <string name="details_activity">Details</string>
     <string name="no_result">No books found.</string>
     <string name="no_network">Not connected to internet.</string>
+    <string name="label_publisher">Published By</string>
 </resources>

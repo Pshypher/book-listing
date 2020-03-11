@@ -6,12 +6,14 @@ import java.util.List;
 
 public class Book {
 
+    private String mBookID;
     private List<String> mAuthors;
     private String mTitle;
     private int mRating;
     private Bitmap mThumbnail;
 
-    public Book(List<String> authors, String title, int rating, Bitmap bitmap) {
+    public Book(String id, List<String> authors, String title, int rating, Bitmap bitmap) {
+        mBookID = id;
         mAuthors = authors;
         mTitle = title;
         mRating = rating;
@@ -32,6 +34,10 @@ public class Book {
 
     public Bitmap getCoverImage() {
         return mThumbnail;
+    }
+
+    public String getBookID() {
+        return mBookID;
     }
 
 }

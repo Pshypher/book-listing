@@ -8,14 +8,19 @@ import androidx.core.view.MenuItemCompat;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.example.ud839_booklisting.details.BookDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +33,24 @@ public class BookListActivity extends AppCompatActivity implements
     private TextView mEmptyView;
     private String searchQuery;
 
-    public static final String GOOGLE_BOOKS_BASE_URL = "https://www.googleapis.com/books/v1/volumes";
+    private ListView.OnItemClickListener mOnItemClickListener =
+            new ListView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Book book = (Book) mAdapter.getItem(position);
+                    Intent bookDetailIntent = new Intent(BookListActivity.this,
+                            BookDetailActivity.class);
+                    bookDetailIntent.putExtra(BOOK_ID, book.getBookID());
+                    startActivity(bookDetailIntent);
+                }
+            };
+
     private static final int GOOGLE_BOOKS_ID = 0;
+    private static final String BOOK_LIST_STATE = "BOOK_LIST_STATE";
+    public static final String GOOGLE_BOOKS_BASE_URL = "https://www.googleapis.com/books/v1/volumes";
     public static final String EXTRA_URL_QUERY = "QUERY_EXTRA";
+    public static final String BOOK_ID = "ID";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,28 +62,44 @@ public class BookListActivity extends AppCompatActivity implements
         listView.setEmptyView(mEmptyView);
         mAdapter = new BookAdapter(this, 0, new ArrayList<Book>());
         listView.setAdapter(mAdapter);
+        listView.setOnItemClickListener(mOnItemClickListener);
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        searchQuery = savedInstanceState.getString(EXTRA_URL_QUERY);
-        if (TextUtils.isEmpty(searchQuery)) {
+        if (savedInstanceState == null) {
             return;
         }
 
+        searchQuery = savedInstanceState.getString(EXTRA_URL_QUERY);
+        Parcelable state = savedInstanceState.getParcelable(BOOK_LIST_STATE);
         Bundle queryBundle = new Bundle();
         queryBundle.putString(EXTRA_URL_QUERY, searchQuery);
-        Loader<List<Book>> loader = getSupportLoaderManager().getLoader(GOOGLE_BOOKS_ID);
-        getSupportLoaderManager().initLoader(GOOGLE_BOOKS_ID, queryBundle, this);
+        if (state != null) {
+            ListView listView = (ListView) findViewById(R.id.list_view);
+            getSupportLoaderManager().initLoader(GOOGLE_BOOKS_ID, queryBundle, this);
+            listView.onRestoreInstanceState(state);
+        } else {
+            if (!TextUtils.isEmpty(searchQuery)) {
+                Loader<List<Book>> loader = getSupportLoaderManager().getLoader(GOOGLE_BOOKS_ID);
+                getSupportLoaderManager().restartLoader(GOOGLE_BOOKS_ID, queryBundle, this);
+            }
+        }
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString(EXTRA_URL_QUERY, searchQuery);
+
+        if (!mAdapter.isEmpty()) {
+            ListView listView = (ListView) findViewById(R.id.list_view);
+            outState.putParcelable(BOOK_LIST_STATE, listView.onSaveInstanceState());
+        }
         super.onSaveInstanceState(outState);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -125,6 +161,8 @@ public class BookListActivity extends AppCompatActivity implements
             mAdapter.addAll(books);
             mAdapter.notifyDataSetChanged();
         }
+
+        searchQuery = null;
     }
 
     @Override

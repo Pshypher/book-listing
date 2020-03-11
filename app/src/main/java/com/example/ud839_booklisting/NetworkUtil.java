@@ -36,7 +36,7 @@ public class NetworkUtil {
 
         String response = null;
         if (url != null) {
-           response = makeHttpRequest(url);
+            response = makeHttpRequest(url);
         }
 
         if (!TextUtils.isEmpty(response)) {
@@ -63,7 +63,7 @@ public class NetworkUtil {
         return url;
     }
 
-    private static String makeHttpRequest(URL url) throws IOException {
+    public static String makeHttpRequest(URL url) throws IOException {
         HttpURLConnection connection = null;
         InputStream inputStream = null;
         String response = null;
@@ -110,7 +110,7 @@ public class NetworkUtil {
         return builder.toString();
     }
 
-    private static Bitmap downloadImage(String urlString) throws IOException {
+    public static Bitmap downloadImage(String urlString) throws IOException {
         if (TextUtils.isEmpty(urlString)) {
             return null;
         }
@@ -141,6 +141,7 @@ public class NetworkUtil {
 
             for (int i = 0; i < bookItems.length(); i++) {
                 JSONObject item = bookItems.getJSONObject(i);
+                String id = item.getString("id");
                 JSONObject volumeInfo = item.getJSONObject("volumeInfo");
                 String title = volumeInfo.getString("title");
 
@@ -157,12 +158,12 @@ public class NetworkUtil {
                 JSONObject imageLinks = volumeInfo.optJSONObject("imageLinks");
                 Bitmap thumbnail = null;
                 if (imageLinks != null) {
-                    thumbnail = downloadImage(imageLinks.optString("thumbnail"));
+                    thumbnail = downloadImage(imageLinks.optString("smallThumbnail"));
                 }
-                books.add(new Book(authors, title, rating, thumbnail));
+                books.add(new Book(id, authors, title, rating, thumbnail));
             }
         } catch (JSONException e) {
-            Log.e(LOG_TAG, "Problem parsing JSON data: " +  e.getMessage());
+            Log.e(LOG_TAG, "Problem parsing JSON data: " + e.getMessage());
         }
 
         return books;

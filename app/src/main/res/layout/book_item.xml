@@ -4,33 +4,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="8dp" android:paddingLeft="8dp"
-    android:paddingTop="8dp" android:paddingEnd="16dp"
-    android:paddingRight="16dp" android:paddingBottom="8dp">
+    android:paddingStart="8dp"
+    android:paddingLeft="8dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="16dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="8dp">
 
     <ImageView
         android:id="@+id/cover_image"
-        android:layout_width="120dp"
-        android:layout_height="192dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/ic_nocover"
         app:layout_constraintBottom_toTopOf="@id/book_rating"
-        android:src="@drawable/ic_nocover" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/book_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginBottom="8dp"
         android:ellipsize="end"
         android:singleLine="true"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        app:layout_constraintTop_toTopOf="@id/cover_image"
         app:layout_constraintBottom_toTopOf="@id/book_authors"
-        app:layout_constraintStart_toEndOf="@id/cover_image"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/cover_image"
+        app:layout_constraintTop_toTopOf="@id/cover_image"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="Programming Android with Bad Diagrams" />
 
@@ -38,8 +41,8 @@
         android:id="@+id/book_authors"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:singleLine="true"
         android:ellipsize="end"
+        android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceMedium"
         app:layout_constraintBottom_toBottomOf="@id/cover_image"
         app:layout_constraintEnd_toEndOf="parent"
@@ -56,9 +59,9 @@
         android:numStars="5"
         android:stepSize="1"
         android:theme="@style/RatingBar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/cover_image"
         app:layout_constraintStart_toStartOf="@id/cover_image"
-        app:layout_constraintTop_toBottomOf="@id/cover_image"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/cover_image" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

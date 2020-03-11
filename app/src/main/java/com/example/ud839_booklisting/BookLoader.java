@@ -9,7 +9,7 @@ import androidx.loader.content.AsyncTaskLoader;
 import java.io.IOException;
 import java.util.List;
 
-class BookLoader extends AsyncTaskLoader<List<Book>> {
+public class BookLoader extends AsyncTaskLoader<List<Book>> {
 
     private Bundle args;
     private List<Book> resultFromHTTP;

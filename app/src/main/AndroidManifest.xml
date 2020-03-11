@@ -12,6 +12,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <activity android:name=".details.BookDetailActivity"
+            android:label="@string/details_activity">
+        </activity>
+
         <activity
             android:name=".BookListActivity"
             android:label="@string/book_list_activity">

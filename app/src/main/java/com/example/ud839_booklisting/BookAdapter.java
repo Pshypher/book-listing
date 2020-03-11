@@ -45,6 +45,7 @@ public class BookAdapter extends ArrayAdapter<Book> {
         return itemView;
     }
 
+
     private static class ViewHolder {
         private TextView mBookTitle;
         private TextView mAuthors;
