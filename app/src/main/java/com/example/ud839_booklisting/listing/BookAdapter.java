@@ -1,4 +1,4 @@
-package com.example.ud839_booklisting;
+package com.example.ud839_booklisting.listing;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.example.ud839_booklisting.R;
 
 import java.util.List;
 

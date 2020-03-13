@@ -1,4 +1,4 @@
-package com.example.ud839_booklisting;
+package com.example.ud839_booklisting.listing;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,10 +20,13 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.ud839_booklisting.R;
 import com.example.ud839_booklisting.details.BookDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.ud839_booklisting.NetworkUtil.isConnected;
 
 public class BookListActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<List<Book>> {
@@ -69,9 +72,8 @@ public class BookListActivity extends AppCompatActivity implements
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null)
             return;
-        }
 
         searchQuery = savedInstanceState.getString(EXTRA_URL_QUERY);
         Parcelable state = savedInstanceState.getParcelable(BOOK_LIST_STATE);
@@ -84,7 +86,11 @@ public class BookListActivity extends AppCompatActivity implements
         } else {
             if (!TextUtils.isEmpty(searchQuery)) {
                 Loader<List<Book>> loader = getSupportLoaderManager().getLoader(GOOGLE_BOOKS_ID);
-                getSupportLoaderManager().restartLoader(GOOGLE_BOOKS_ID, queryBundle, this);
+                if (isConnected(this))
+                    getSupportLoaderManager().restartLoader(GOOGLE_BOOKS_ID, queryBundle,
+                            this);
+                else
+                    postNoConnection();
             }
         }
     }
@@ -99,7 +105,6 @@ public class BookListActivity extends AppCompatActivity implements
         }
         super.onSaveInstanceState(outState);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -116,11 +121,18 @@ public class BookListActivity extends AppCompatActivity implements
                 Bundle queryBundle = new Bundle();
                 queryBundle.putString(EXTRA_URL_QUERY, query);
                 Loader<List<Book>> loader = loaderManager.getLoader(GOOGLE_BOOKS_ID);
-                if (loader == null) {
-                    loaderManager.initLoader(GOOGLE_BOOKS_ID, queryBundle, BookListActivity.this);
-                } else {
-                    loaderManager.restartLoader(GOOGLE_BOOKS_ID, queryBundle, BookListActivity.this);
+
+                if (!isConnected(BookListActivity.this))
+                    postNoConnection();
+                else {
+                    if (loader == null)
+                        loaderManager.initLoader(GOOGLE_BOOKS_ID, queryBundle,
+                                BookListActivity.this);
+                    else
+                        loaderManager.restartLoader(GOOGLE_BOOKS_ID, queryBundle,
+                                BookListActivity.this);
                 }
+
 
                 searchView.setQuery("", false);
                 searchView.setIconified(true);
@@ -154,9 +166,9 @@ public class BookListActivity extends AppCompatActivity implements
     public void onLoadFinished(@NonNull Loader<List<Book>> loader, List<Book> books) {
         mProgressIndicator.setVisibility(View.GONE);
 
-        if (books == null) {
+        if (books == null)
             mEmptyView.setText(R.string.no_result);
-        } else {
+        else {
             mAdapter.clear();
             mAdapter.addAll(books);
             mAdapter.notifyDataSetChanged();
@@ -169,5 +181,10 @@ public class BookListActivity extends AppCompatActivity implements
     public void onLoaderReset(@NonNull Loader<List<Book>> loader) {
         mAdapter.clear();
         mAdapter.notifyDataSetChanged();
+    }
+
+    private void postNoConnection() {
+        mProgressIndicator.setVisibility(View.GONE);
+        mEmptyView.setText(R.string.disconnected);
     }
 }

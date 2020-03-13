@@ -1,4 +1,4 @@
-package com.example.ud839_booklisting;
+package com.example.ud839_booklisting.listing;
 
 import android.graphics.Bitmap;
 

@@ -1,4 +1,4 @@
-package com.example.ud839_booklisting;
+package com.example.ud839_booklisting.listing;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -37,7 +37,7 @@ public class BookLoader extends AsyncTaskLoader<List<Book>> {
         String query = args.getString(BookListActivity.EXTRA_URL_QUERY);
         List<Book> books = null;
         try {
-            books = NetworkUtil.fetchData(query);
+            books = QueryUtil.fetchData(query);
         } catch (IOException e) {
             // TODO: Catch IO exception
         }

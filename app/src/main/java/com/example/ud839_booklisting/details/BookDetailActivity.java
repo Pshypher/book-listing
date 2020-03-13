@@ -7,13 +7,18 @@ import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.ud839_booklisting.BookListActivity;
+import com.example.ud839_booklisting.listing.BookListActivity;
 import com.example.ud839_booklisting.R;
 
 import java.util.List;
+
+import static com.example.ud839_booklisting.NetworkUtil.isConnected;
 
 public class BookDetailActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Book> {
@@ -27,7 +32,15 @@ public class BookDetailActivity extends AppCompatActivity implements
         Bundle queryBundle = new Bundle();
         queryBundle.putString(BookListActivity.BOOK_ID,
                 getIntent().getStringExtra(BookListActivity.BOOK_ID));
-        getSupportLoaderManager().initLoader(BOOK_VOLUME_ID, queryBundle, this);
+        if (isConnected(this)) {
+            getSupportLoaderManager().initLoader(BOOK_VOLUME_ID, queryBundle, this);
+        } else {
+            ((ProgressBar) findViewById(R.id.loading_spinner)).setVisibility(View.GONE);
+            TextView emptyTextView = (TextView) findViewById(R.id.empty);
+            emptyTextView.setVisibility(View.VISIBLE);
+            emptyTextView.setText(R.string.disconnected);
+        }
+
     }
 
     @NonNull
@@ -38,6 +51,38 @@ public class BookDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onLoadFinished(@NonNull Loader<Book> loader, Book book) {
+
+        ((ProgressBar) findViewById(R.id.loading_spinner)).setVisibility(View.GONE);
+
+        if (book == null) {
+            TextView emptyTextView = (TextView) findViewById(R.id.empty);
+            emptyTextView.setVisibility(View.VISIBLE);
+            emptyTextView.setText(R.string.not_found);
+            return;
+        } else {
+            postResponse(book);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Book> loader) {
+        return;
+    }
+
+    private String format(List<String> authors) {
+        StringBuilder builder = new StringBuilder();
+        for (int j = 0; j < authors.size(); j++) {
+            if (j > 0) {
+                builder.append(", ");
+            }
+            builder.append(authors.get(j));
+        }
+        return builder.toString();
+    }
+
+    private void postResponse(Book book) {
+        LinearLayout parentViewGroup = (LinearLayout) findViewById(R.id.book_detail_layout);
+        parentViewGroup.setVisibility(View.VISIBLE);
         ImageView thumbnail = (ImageView) findViewById(R.id.cover_image);
         TextView titleTextView = (TextView) findViewById(R.id.book_title);
         TextView authorsTextView = (TextView) findViewById(R.id.book_authors);
@@ -55,21 +100,5 @@ public class BookDetailActivity extends AppCompatActivity implements
             pagesTextView.setText(String.format("%d pages", pages));
         }
 
-    }
-
-    @Override
-    public void onLoaderReset(@NonNull Loader<Book> loader) {
-        return;
-    }
-
-    private String format(List<String> authors) {
-        StringBuilder builder = new StringBuilder();
-        for (int j = 0; j < authors.size(); j++) {
-            if (j > 0) {
-                builder.append(", ");
-            }
-            builder.append(authors.get(j));
-        }
-        return builder.toString();
     }
 }

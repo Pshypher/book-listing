@@ -4,8 +4,7 @@ import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.example.ud839_booklisting.BookListActivity;
-import com.example.ud839_booklisting.NetworkUtil;
+import com.example.ud839_booklisting.listing.BookListActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,7 +18,7 @@ import static com.example.ud839_booklisting.NetworkUtil.*;
 
 
 class QueryUtil {
-    private static final String LOG_TAG = NetworkUtil.class.getSimpleName();
+    private static final String LOG_TAG = com.example.ud839_booklisting.listing.QueryUtil.class.getSimpleName();
 
     private QueryUtil() {
         // Cannot construct objects of an utility class.
@@ -45,11 +44,7 @@ class QueryUtil {
     private static URL createURL(String param) {
         URL url = null;
         try {
-            if (!param.startsWith("http://")) {
-                param = BookListActivity.GOOGLE_BOOKS_BASE_URL + "/" + param;
-            } else {
-                param = param.replace("http://", "https://");
-            }
+            param = BookListActivity.GOOGLE_BOOKS_BASE_URL + "/" + param;
             url = new URL(param);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Problem parsing url string", e);
